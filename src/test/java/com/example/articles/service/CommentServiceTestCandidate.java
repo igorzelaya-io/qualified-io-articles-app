@@ -11,11 +11,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.sql.Array;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.IntStream;
 
 @RunWith(SpringRunner.class)
@@ -67,11 +65,9 @@ public class CommentServiceTestCandidate {
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        commentService = new CommentServiceImpl();
+        commentService = new CommentServiceImpl
+                (new ArrayList<>(Collections.singletonList(comment)));
 
-        comments = Arrays.asList(comment);
-
-        commentService.setComments(comments);
     }
 
     @Test

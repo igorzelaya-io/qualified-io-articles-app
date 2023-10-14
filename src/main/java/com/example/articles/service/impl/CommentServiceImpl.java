@@ -15,10 +15,9 @@ public class CommentServiceImpl implements CommentService {
 
     private List<Comment> comments = new ArrayList<>();
 
-    public CommentServiceImpl(){
-
+    public CommentServiceImpl(List<Comment> comments){
+        this.comments = comments;
     }
-
     @Override
     public void setComments(List<Comment> comments){
         this.comments = comments;
@@ -26,7 +25,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<Comment> findAll() {
-        return this.comments;
+        return new ArrayList<>(comments);
     }
 
     @Override
@@ -49,28 +48,21 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Comment update(int id, Comment entity) {
 
-        Comment modifiedComment = findById(id)
+        return findById(id)
                 .toBuilder()
                 .text(entity.getText())
                 .email(entity.getEmail())
                 .updatedAt(LocalDateTime.now())
                 .id_article(entity.getId_article())
-                .createdAt(entity.getCreatedAt())
+                .updatedAt(LocalDateTime.now())
                 .build();
 
-        IntStream
-                .range(0, comments.size())
-                .filter(index -> comments.get(index).getId() == id)
-                .findFirst()
-                .ifPresent(index -> comments.set(index, modifiedComment));
-
-        return modifiedComment;
     }
 
     @Override
     public void delete(int id) {
         if(!comments.removeIf(comment -> comment.getId() == id)){
-            new NotFoundException(Comment.class, "id", String.valueOf(id));
+            throw new NotFoundException(Comment.class, "id", String.valueOf(id));
         }
     }
 

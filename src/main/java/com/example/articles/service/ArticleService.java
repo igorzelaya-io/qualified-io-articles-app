@@ -22,6 +22,4 @@ public interface ArticleService extends CrudRepository<Article> {
     @Override
     void delete(int id);
 
-    void setArticles(List<Article> articles);
-
 }

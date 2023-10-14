@@ -51,11 +51,8 @@ public class ArticleServiceTestCandidate {
                 .comments(new ArrayList<>())
                 .build();
 
-        articleService = new ArticleServiceImpl();
-
-        articles = Arrays.asList(article);
-
-        articleService.setArticles(articles);
+        articleService = new ArticleServiceImpl
+                (new ArrayList<>(Arrays.asList(article)));
 
     }
 

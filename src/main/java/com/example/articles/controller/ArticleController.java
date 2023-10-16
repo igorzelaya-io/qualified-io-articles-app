@@ -4,11 +4,11 @@ import com.example.articles.dto.ArticleDto;
 import com.example.articles.mapper.ArticleMapper;
 import com.example.articles.model.Article;
 import com.example.articles.service.ArticleService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController

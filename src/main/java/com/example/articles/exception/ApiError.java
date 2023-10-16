@@ -2,12 +2,11 @@ package com.example.articles.exception;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.springframework.boot.context.properties.bind.validation.ValidationErrors;
+import jakarta.validation.ConstraintViolation;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 
-import javax.validation.ConstraintViolation;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;

@@ -61,7 +61,6 @@ public class CommentControllerTestCandidate extends AbstractControllerTest {
 
         comments = new ArrayList<>(Arrays.asList(comment));
 
-        commentService.setComments(comments);
     }
 
     @Test

@@ -18,10 +18,6 @@ public class CommentServiceImpl implements CommentService {
     public CommentServiceImpl(List<Comment> comments){
         this.comments = comments;
     }
-    @Override
-    public void setComments(List<Comment> comments){
-        this.comments = comments;
-    }
 
     @Override
     public List<Comment> findAll() {

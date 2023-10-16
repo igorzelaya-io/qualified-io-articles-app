@@ -5,11 +5,11 @@ import com.example.articles.dto.CommentDto;
 import com.example.articles.mapper.CommentMapper;
 import com.example.articles.model.Comment;
 import com.example.articles.service.CommentService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController

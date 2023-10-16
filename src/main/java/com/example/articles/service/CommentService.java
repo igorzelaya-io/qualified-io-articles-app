@@ -22,6 +22,4 @@ public interface CommentService extends CrudRepository<Comment> {
     @Override
     void delete(int id);
 
-    public void setComments(List<Comment> comments);
-
 }

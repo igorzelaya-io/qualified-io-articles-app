@@ -15,6 +15,7 @@ import org.junit.runner.RunWith;
 import org.springframework.http.*;
 import java.util.*;
 
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.hamcrest.Matchers.*;
@@ -100,6 +101,7 @@ public class ArticleControllerTestCandidate extends AbstractControllerTest{
 
         doRequestSaveArticle(articleDto)
                 .andExpect(status().isCreated());
+
     }
 
     private ResultActions doRequestSaveArticle(final ArticleDto dto) throws Exception {

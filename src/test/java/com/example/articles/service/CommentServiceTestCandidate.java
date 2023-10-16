@@ -65,9 +65,8 @@ public class CommentServiceTestCandidate {
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        commentService = new CommentServiceImpl
-                (new ArrayList<>(Collections.singletonList(comment)));
-
+        this.comments = new ArrayList<>(Arrays.asList(comment));
+        commentService = new CommentServiceImpl(comments);
     }
 
     @Test
@@ -151,18 +150,9 @@ public class CommentServiceTestCandidate {
 
         try{
 
-            int index = IntStream
-                    .range(0, comments.size())
-                    .filter(i -> comments.get(i).getId() == COMMENT_ID)
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Comment not found at list"));
-
-            Comment supposedCommentAtIndex = comments.get(index);
-
             Assertions.assertNotNull(updatedComment);
-            Assertions.assertNotNull(supposedCommentAtIndex);
-            Assertions.assertEquals(supposedCommentAtIndex.getEmail(), secondComment.getEmail());
-            Assertions.assertEquals(supposedCommentAtIndex.getText(), secondComment.getText());
+            Assertions.assertEquals(updatedComment.getEmail(), secondComment.getEmail());
+            Assertions.assertEquals(updatedComment.getText(), secondComment.getText());
 
         }
         catch(Exception e){

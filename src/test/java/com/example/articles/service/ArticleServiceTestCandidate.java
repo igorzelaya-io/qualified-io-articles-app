@@ -51,9 +51,8 @@ public class ArticleServiceTestCandidate {
                 .comments(new ArrayList<>())
                 .build();
 
-        articleService = new ArticleServiceImpl
-                (new ArrayList<>(Arrays.asList(article)));
-
+        this.articles = new ArrayList<>(Arrays.asList(article));
+        articleService = new ArticleServiceImpl(articles);
     }
 
     @Test
@@ -136,25 +135,16 @@ public class ArticleServiceTestCandidate {
 
         Article updatedArticle = articleService.update(ARTICLE_ID, secondArticle);
 
-        try{
-
-            int index = IntStream
-                    .range(0, articles.size())
-                    .filter(i -> articles.get(i).getId() == ARTICLE_ID)
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Article not found at list"));
-
-            Article supposedArticleAtIndex = articles.get(index);
+        try {
 
             Assertions.assertNotNull(updatedArticle);
-            Assertions.assertNotNull(supposedArticleAtIndex);
-            Assertions.assertEquals(supposedArticleAtIndex.getTitle(), secondArticle.getTitle());
-            Assertions.assertEquals(supposedArticleAtIndex.getArticleType(), secondArticle.getArticleType());
-            Assertions.assertEquals(supposedArticleAtIndex.getBody(), secondArticle.getBody());
+            Assertions.assertEquals(updatedArticle.getTitle(), secondArticle.getTitle());
+            Assertions.assertEquals(updatedArticle.getArticleType(), secondArticle.getArticleType());
+            Assertions.assertEquals(updatedArticle.getBody(), secondArticle.getBody());
 
         }
         catch(Exception e){
-            Assertions.fail("Article was not updated at list index.");
+            Assertions.fail("Article was not updated at list.");
         }
     }
 }

@@ -19,7 +19,6 @@ public class Article implements Comparable<Article> {
     @Column(name = "type", nullable = false)
     @Enumerated(EnumType.STRING)
     private ArticleType type;
-
     @OneToMany(mappedBy = "id_article", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
@@ -88,6 +87,15 @@ public class Article implements Comparable<Article> {
     @Override
     public int compareTo(Article o) {
         return Integer.compare(this.id, o.getId());
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (this == null) return false;
+        if (obj.getClass() != this.getClass()) return false;
+
+        Article article = (Article) obj;
+        return this.id == article.id && this.title.equals(article.getTitle());
     }
 
     public static class Builder {

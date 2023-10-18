@@ -4,6 +4,7 @@ import com.example.articles.constants.ArticleType;
 import com.example.articles.exception.NotFoundException;
 import com.example.articles.model.Article;
 import com.example.articles.model.Comment;
+import com.example.articles.service.impl.ArticleServiceImpl;
 import com.example.articles.service.impl.CommentServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,9 +25,15 @@ public class CommentServiceTestCandidate {
     //@MockBean
     private CommentService commentService;
 
+    private ArticleService articleService;
+
     private Comment comment;
 
     private Comment secondComment;
+
+    private Article article;
+
+    private static final int ARTICLE_ID = 1;
 
     private static final int COMMENT_ID = 1;
 
@@ -66,7 +73,18 @@ public class CommentServiceTestCandidate {
                 .build();
 
         this.comments = new ArrayList<>(Arrays.asList(comment));
-        commentService = new CommentServiceImpl(comments);
+
+        article = new Article.Builder()
+                .id(ARTICLE_ID)
+                .title("A complete guide to dependency injection in Spring Boot.")
+                .type(ArticleType.CASE_STUDY)
+                .body("Make sure you utilize an interface-driven approach in order to achieve loose coupling")
+                .comments(this.comments)
+                .build();
+
+        articleService = new ArticleServiceImpl(new ArrayList<>(Arrays.asList(article)));
+
+        commentService = new CommentServiceImpl(comments, articleService);
     }
 
     @Test
@@ -121,7 +139,6 @@ public class CommentServiceTestCandidate {
         Assertions.assertEquals(savedComment.getText(), secondComment.getText());
 
     }
-
     @Test
     public void shouldDeleteComment(){
 
@@ -149,14 +166,18 @@ public class CommentServiceTestCandidate {
         Comment updatedComment = commentService.update(COMMENT_ID, secondComment);
 
         try{
-
             Assertions.assertNotNull(updatedComment);
             Assertions.assertEquals(updatedComment.getEmail(), secondComment.getEmail());
             Assertions.assertEquals(updatedComment.getText(), secondComment.getText());
-
         }
         catch(Exception e){
             Assertions.fail("Comment was not updated at list index.");
         }
+    }
+    @Test
+    public void shouldRetriveCommentsByArticleId() {
+        List<Comment> commentList = commentService.getArticleComments(ARTICLE_ID);
+        Assertions.assertTrue(commentList != null);
+        Assertions.assertEquals(commentList.size(), this.comments.size());
     }
 }

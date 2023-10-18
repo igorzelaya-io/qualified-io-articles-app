@@ -1,7 +1,9 @@
 package com.example.articles.service.impl;
 
 import com.example.articles.exception.NotFoundException;
+import com.example.articles.model.Article;
 import com.example.articles.model.Comment;
+import com.example.articles.service.ArticleService;
 import com.example.articles.service.CommentService;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +17,11 @@ public class CommentServiceImpl implements CommentService {
 
     private List<Comment> comments = new ArrayList<>();
 
-    public CommentServiceImpl(List<Comment> comments){
+    private final ArticleService articleService;
+
+    public CommentServiceImpl(List<Comment> comments, ArticleService articleService){
         this.comments = comments;
+        this.articleService = articleService;
     }
 
     @Override
@@ -54,12 +59,17 @@ public class CommentServiceImpl implements CommentService {
                 .build();
 
     }
-
     @Override
     public void delete(int id) {
         if(!comments.removeIf(comment -> comment.getId() == id)){
             throw new NotFoundException(Comment.class, "id", String.valueOf(id));
         }
     }
+    @Override
+    public List<Comment> getArticleComments(int articleId) {
 
+        return articleService.findById(articleId)
+                .getArticleComments();
+
+    }
 }

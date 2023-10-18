@@ -13,14 +13,12 @@ public class Comment implements Comparable<Comment>{
     private Article id_article;
     @Column(name = "email", nullable = false)
     private String email;
-
     @Column(name = "text", nullable = false)
     private String text;
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
-
     public Comment(int id, Article id_article, String email, String text, LocalDateTime updatedAt, LocalDateTime createdAt) {
         this.id = id;
         this.id_article = id_article;

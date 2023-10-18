@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/comments")
+@RequestMapping("/api/v1")
 public class CommentController {
     private CommentMapper mapper;
     private CommentService service;
@@ -23,34 +23,40 @@ public class CommentController {
         this.mapper = CommentMapper.getInstance();
     }
 
-    @GetMapping
+    @GetMapping("/comments")
     public ResponseEntity<List<? extends Comment>> findAll() {
         return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/comments/{id}")
     public ResponseEntity<Comment> findById(@PathVariable("id") int id) {
         Comment comment = service.findById(id);
         return new ResponseEntity<>(comment, HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/comments")
     public ResponseEntity<Comment> saveComment(@RequestBody @Valid CommentDto commentDto) {
         Comment savedComment = service.save(mapper.fromDto(commentDto));
         return new ResponseEntity<>(savedComment, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/comments/{id}")
     public ResponseEntity<Comment> updateComment(@PathVariable("id") int id,
                                                  @RequestBody @Valid CommentDto commentDto) {
         Comment updatedComment = service.update(id, mapper.fromDto(commentDto));
         return new ResponseEntity<>(updatedComment, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/comments/{id}")
     public ResponseEntity<Comment> deleteComment(@PathVariable("id") int id){
         service.delete(id);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/articles/{articleId}/comments")
+    public ResponseEntity<List<Comment>> findAllCommentsByArticleId(@PathVariable("articleId") final Integer articleId) {
+        List<Comment> comments = service.getArticleComments(articleId);
+        return new ResponseEntity<>(comments, HttpStatus.OK);
     }
 
 }

@@ -2,6 +2,7 @@ package com.example.articles.controller;
 
 import com.example.articles.constants.ArticleType;
 import com.example.articles.dto.ArticleDto;
+import com.example.articles.dto.CommentDto;
 import com.example.articles.model.Article;
 import com.example.articles.service.ArticleService;
 import org.springframework.boot.test.context.*;
@@ -25,7 +26,6 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 public class ArticleControllerTestCandidate extends AbstractControllerTest{
 
-
     List<Article> articles;
 
     @MockBean
@@ -38,6 +38,8 @@ public class ArticleControllerTestCandidate extends AbstractControllerTest{
     private ArticleDto articleDto;
 
     private static final int ARTICLE_ID = 1;
+
+    private static final int COMMENT_ID = 2;
 
     private static final String ARTICLE_TITLE = "Our road to Beating Qualified.io's assessment!";
 
@@ -170,5 +172,32 @@ public class ArticleControllerTestCandidate extends AbstractControllerTest{
                         .content(getObjectMapper().writeValueAsString(dto)));
 
     }
+    @Test
+    public void shouldAddCommentToArticle() throws Exception {
+        CommentDto commentDto = new CommentDto(1, "a@test.com", "Text", article);
 
+        doRequestAddComment(ARTICLE_ID, commentDto)
+                .andExpect(status().isOk());
+
+    }
+    private ResultActions doRequestAddComment(final Integer articleId, final CommentDto dto) throws Exception {
+        return getMockMvc()
+                .perform(post(baseUri + "/{id}/comments", articleId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(getObjectMapper().writeValueAsString(dto)));
+    }
+    @Test
+    public void shouldRemoveCommentById() throws Exception {
+
+        doRequestRemoveComment(ARTICLE_ID, COMMENT_ID)
+                .andExpect(status().isOk());
+
+    }
+    private ResultActions doRequestRemoveComment(final Integer id, final Integer commentId) throws Exception {
+        return getMockMvc()
+                .perform(delete(baseUri + "/{id}/comments/{commentId}", id, commentId)
+                        .contentType(MediaType.APPLICATION_JSON));
+
+    }
 }

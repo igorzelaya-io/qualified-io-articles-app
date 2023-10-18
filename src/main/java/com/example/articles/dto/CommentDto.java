@@ -31,6 +31,7 @@ public class CommentDto {
         this.id = id;
         this.email = email;
         this.text = text;
+        this.id_article = id_article;
     }
 
     public int getId() {

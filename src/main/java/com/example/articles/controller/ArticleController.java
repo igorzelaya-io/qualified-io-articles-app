@@ -1,8 +1,11 @@
 package com.example.articles.controller;
 
 import com.example.articles.dto.ArticleDto;
+import com.example.articles.dto.CommentDto;
 import com.example.articles.mapper.ArticleMapper;
+import com.example.articles.mapper.CommentMapper;
 import com.example.articles.model.Article;
+import com.example.articles.model.Comment;
 import com.example.articles.service.ArticleService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -45,5 +48,27 @@ public class ArticleController {
     public ResponseEntity<Void> deleteArticle(@PathVariable("id") int id) {
         service.delete(id);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @PostMapping("/{id}/comments")
+    public ResponseEntity<Void> addCommentToArticle(@PathVariable("id")final Integer articleId,
+                                                    @RequestBody @Valid  CommentDto commentDto) {
+        try {
+            service.addCommentToArticle(articleId, CommentMapper.getInstance().fromDto(commentDto));
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @DeleteMapping("/{id}/comments/{commentId}")
+    public ResponseEntity<Void> removeCommentById(@PathVariable("id")final Integer id,
+                                                  @PathVariable("commentId")final Integer commentId) {
+        try {
+            service.removeCommentFromArticle(id, commentId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

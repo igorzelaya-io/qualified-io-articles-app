@@ -17,7 +17,7 @@ public class NotFoundException extends RuntimeException{
 
     public NotFoundException(Class entityClass, String... searchParamsMap){
         super(NotFoundException.generateExceptionMessage(entityClass.getSimpleName(),
-                toMap(String.class, String.class, searchParamsMap)));
+                toMap(String.class, String.class, (Object[]) searchParamsMap)));
     }
 
     private static String generateExceptionMessage(String entity, Map<String, String> searchParams){

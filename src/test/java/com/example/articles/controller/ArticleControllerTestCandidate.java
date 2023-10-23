@@ -77,8 +77,6 @@ public class ArticleControllerTestCandidate extends AbstractControllerTest{
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
     }
-
-
     @Test
     public void shouldGetArticleById() throws Exception {
 

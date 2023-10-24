@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.sql.Array;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -159,18 +160,16 @@ public class CommentServiceTestCandidate {
             Assertions.assertEquals(EX_MESSAGE, e.getMessage());
         }
     }
-
     @Test
     public void shouldUpdateComment() {
 
         Comment updatedComment = commentService.update(COMMENT_ID, secondComment);
 
-        try{
+        try {
             Assertions.assertNotNull(updatedComment);
             Assertions.assertEquals(updatedComment.getEmail(), secondComment.getEmail());
             Assertions.assertEquals(updatedComment.getText(), secondComment.getText());
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             Assertions.fail("Comment was not updated at list index.");
         }
     }
@@ -180,4 +179,31 @@ public class CommentServiceTestCandidate {
         Assertions.assertTrue(commentList != null);
         Assertions.assertEquals(commentList.size(), this.comments.size());
     }
+    @Test
+    public void shouldFindCommentsInRange() {
+
+        final LocalDateTime startOfToday = LocalDateTime.parse("2023-10-23T00:00:00");
+        final LocalDateTime endOfToday = LocalDateTime.parse("2023-10-23T23:59:59");
+
+        final Comment validComment = new Comment.Builder()
+                .id(100)
+                .text("This comment was just posted.")
+                .email("i@test.com")
+                .createdAt(LocalDateTime.parse("2023-10-23T01:00:00"))
+                .build();
+
+        comments.add(validComment);
+        List<Comment> comments = commentService.findCreatedInBetweenDate(startOfToday, endOfToday);
+
+        Assertions.assertEquals(1, comments.size());
+        Assertions.assertEquals(comments.get(0).getId(), validComment.getId());
+        Assertions.assertTrue(comments.stream()
+                .allMatch
+                        (validatedComment -> isInBetweenDates(validatedComment, startOfToday, endOfToday)));
+    }
+    private boolean isInBetweenDates(Comment comment, LocalDateTime startDate, LocalDateTime endDate) {
+        LocalDateTime createdAt = comment.getCreatedAt();
+        return createdAt.isAfter(startDate) && createdAt.isBefore(endDate);
+    }
+
 }

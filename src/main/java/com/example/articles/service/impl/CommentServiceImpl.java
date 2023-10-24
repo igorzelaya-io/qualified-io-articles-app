@@ -1,7 +1,6 @@
 package com.example.articles.service.impl;
 
 import com.example.articles.exception.NotFoundException;
-import com.example.articles.model.Article;
 import com.example.articles.model.Comment;
 import com.example.articles.service.ArticleService;
 import com.example.articles.service.CommentService;
@@ -10,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -71,5 +70,13 @@ public class CommentServiceImpl implements CommentService {
         return articleService.findById(articleId)
                 .getArticleComments();
 
+    }
+    @Override
+    public List<Comment> findCreatedInBetweenDate(LocalDateTime startDate, LocalDateTime endDate) {
+        return this.comments
+                .stream()
+                .filter(comment -> comment.getCreatedAt().isAfter(startDate) &&
+                        comment.getCreatedAt().isBefore(endDate))
+                .collect(Collectors.toList());
     }
 }

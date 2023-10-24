@@ -3,12 +3,10 @@ package com.example.articles.controller;
 import com.example.articles.dto.CommentDto;
 import com.example.articles.model.Article;
 import com.example.articles.model.Comment;
-import com.example.articles.service.ArticleService;
 import com.example.articles.service.CommentService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -185,13 +183,33 @@ public class CommentControllerTestCandidate extends AbstractControllerTest {
 
         doRequestFindAllCommentsByArticleId(ARTICLE_ID)
                 .andExpect(status().isOk());
-    }
 
+    }
     private ResultActions doRequestFindAllCommentsByArticleId(int articleId) throws Exception {
         return getMockMvc()
                 .perform(get("/api/v1/articles/{articleId}/comments", ARTICLE_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    public void shouldReturnCommentInBetweenDates() throws Exception {
+
+        final String startDate = "2023-10-23T00:00:00";
+        final String endDate = "2023-10-23T23:59:59";
+
+        doRequestFindInBetweenDates(startDate, endDate)
+                .andExpect(status().isOk());
+    }
+
+    private ResultActions doRequestFindInBetweenDates(final String startDate, final String endDate) throws Exception {
+
+        return getMockMvc()
+                .perform(get("/api/v1/comments")
+                        .param("startDate", startDate)
+                        .param("endDate", endDate)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON));
     }
 
 }

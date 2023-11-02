@@ -10,14 +10,12 @@ import java.util.stream.IntStream;
 public class NotFoundException extends RuntimeException{
 
     private static final long serialVersionUID = -7272303639193378954L;
-
     public NotFoundException(){
         super();
     }
-
     public NotFoundException(Class entityClass, String... searchParamsMap){
         super(NotFoundException.generateExceptionMessage(entityClass.getSimpleName(),
-                toMap(String.class, String.class, (Object[]) searchParamsMap)));
+                toMap(String.class, String.class, searchParamsMap)));
     }
 
     private static String generateExceptionMessage(String entity, Map<String, String> searchParams){

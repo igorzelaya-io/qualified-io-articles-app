@@ -10,5 +10,6 @@ public interface CommentService extends CrudRepository<Comment> {
     List<Comment> getArticleComments(final int articleId);
 
     List<Comment> findCreatedInBetweenDate(LocalDateTime startDate, LocalDateTime endDate);
+    Comment findCommentByEmail(final String commentEmail);
 
 }

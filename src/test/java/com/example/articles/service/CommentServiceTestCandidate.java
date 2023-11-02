@@ -12,11 +12,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.sql.Array;
 import java.time.LocalDateTime;
-import java.time.Month;
+import java.time.format.DateTimeParseException;
 import java.util.*;
-import java.util.stream.IntStream;
 
 @RunWith(SpringRunner.class)
 public class CommentServiceTestCandidate {
@@ -101,7 +99,7 @@ public class CommentServiceTestCandidate {
     }
 
     @Test
-    public void whenNotFound_shouldThrowException(){
+    public void whenNotFoundById_shouldThrowException(){
 
         Map<String, String> params = Map.of("id", String.valueOf(INVALID_ID));
 
@@ -112,6 +110,38 @@ public class CommentServiceTestCandidate {
         try {
             Comment foundComment = commentService.findById(INVALID_ID);
             Assertions.fail("Exception should've been thrown.");
+        }
+        catch(Exception ex) {
+            Assertions.assertTrue(ex instanceof NotFoundException);
+            Assertions.assertEquals(EX_MESSAGE, ex.getMessage());
+        }
+    }
+
+    @Test
+    public void shouldReturnCommentByEmail() {
+
+        Comment foundComment = commentService.findCommentByEmail(COMMENT_EMAIL);
+
+        Assertions.assertNotNull(foundComment);
+        Assertions.assertEquals(foundComment.getId(), COMMENT_ID);
+        Assertions.assertEquals(foundComment.getEmail(), COMMENT_EMAIL);
+        Assertions.assertEquals(foundComment.getText(), COMMENT_TEXT);
+
+    }
+    @Test
+    public void whenNotFoundByEmail_shouldThrowException() {
+
+        final String INVALID_EMAIL = "invalid@email.net";
+
+        Map<String, String> params = Map.of("email", String.valueOf(INVALID_EMAIL));
+
+        final String EX_MESSAGE = new StringBuilder("Comment was not found for parameters")
+                .append(" ")
+                .append(params).toString();
+
+        try {
+            Comment foundComment = commentService.findCommentByEmail(INVALID_EMAIL);
+            Assertions.fail("Exception should've been thrown for invalid email.");
         }
         catch(Exception ex) {
             Assertions.assertTrue(ex instanceof NotFoundException);
@@ -200,6 +230,21 @@ public class CommentServiceTestCandidate {
         Assertions.assertTrue(comments.stream()
                 .allMatch
                         (validatedComment -> isInBetweenDates(validatedComment, startOfToday, endOfToday)));
+    }
+    @Test
+    public void whenInvalidDate_shouldThrowException() {
+
+        try {
+
+            final LocalDateTime startOfToday = LocalDateTime.parse("2023-10-23T00:00:00");
+            final LocalDateTime endOfToday = LocalDateTime.parse("2023-10_23T23:59:59");
+
+            List<Comment> comments = this.commentService.findCreatedInBetweenDate(startOfToday, endOfToday);
+            Assertions.fail("It should've failed execution for invalid endDate");
+        }
+        catch(Exception e) {
+            Assertions.assertTrue(e instanceof DateTimeParseException);
+        }
     }
     private boolean isInBetweenDates(Comment comment, LocalDateTime startDate, LocalDateTime endDate) {
         LocalDateTime createdAt = comment.getCreatedAt();

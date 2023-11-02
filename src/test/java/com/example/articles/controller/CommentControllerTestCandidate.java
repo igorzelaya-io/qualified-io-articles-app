@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -99,7 +100,6 @@ public class CommentControllerTestCandidate extends AbstractControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON));
     }
-
     @Test
     public void shouldSaveComment() throws Exception {
 
@@ -201,7 +201,6 @@ public class CommentControllerTestCandidate extends AbstractControllerTest {
         doRequestFindInBetweenDates(startDate, endDate)
                 .andExpect(status().isOk());
     }
-
     private ResultActions doRequestFindInBetweenDates(final String startDate, final String endDate) throws Exception {
 
         return getMockMvc()
@@ -210,6 +209,56 @@ public class CommentControllerTestCandidate extends AbstractControllerTest {
                         .param("endDate", endDate)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON));
+    }
+    @Test
+    public void ifInvalidDate_throwException() throws Exception {
+
+        final String startDate = "2023-10-23T00:00:00";
+        final String invalidEndDate = "2023-10_23T23:59:50";
+
+        doRequestFindInBetweenDates(startDate, invalidEndDate)
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testHandleMethodArgumentTypeMismatch() throws Exception {
+
+        getMockMvc().perform(get(baseUri+ "/not_an_int"))
+                .andExpect(status().isBadRequest());
+
+    }
+
+    @Test
+    public void testHandleHttpMediaTypeNotSupported() throws Exception {
+
+        getMockMvc().perform(post(baseUri)
+                        .accept(MediaType.APPLICATION_XML)
+                        .contentType(MediaType.APPLICATION_XML)
+                        .content(getObjectMapper().writeValueAsString(this.commentDto)))
+                .andExpect(status().isUnsupportedMediaType());
+
+    }
+
+    @Test
+    public void testHandleHttpMessageNotReadable() throws Exception {
+
+        final String malformedJson = "{\"key1\": \"value1\", \"key2\": \"value2\", \"key3\":}";
+
+        getMockMvc().perform(post(baseUri)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                        .content(malformedJson))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testHandleMissingServletRequestArgument() throws Exception {
+
+        getMockMvc().perform(get(baseUri + "/emails")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
     }
 
 }

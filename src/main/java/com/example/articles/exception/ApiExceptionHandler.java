@@ -23,13 +23,15 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.time.format.DateTimeParseException;
+
 @RestControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(ApiExceptionHandler.class);
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity handleNotFoundException(NotFoundException ex) {
+    public ResponseEntity<Object> handleNotFoundException(NotFoundException ex) {
         ApiError error = new ApiError(HttpStatus.NOT_FOUND, ex.getMessage(), ex);
         return buildResponseEntity(error);
     }
@@ -39,6 +41,15 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         ApiError errorResponse = new ApiError(HttpStatus.BAD_REQUEST);
         errorResponse.setMsg("Validation error.");
         errorResponse.addValidationErrors(ex.getConstraintViolations());
+        logger.error(errorResponse.getMsg());
+        return buildResponseEntity(errorResponse);
+    }
+
+    @ExceptionHandler(DateTimeParseException.class)
+    protected ResponseEntity<Object> handleMalformedDateTimeException(DateTimeParseException ex) {
+        ApiError errorResponse = new ApiError(HttpStatus.BAD_REQUEST);
+        errorResponse.setMsg("Error parsing LocalDateTime parameter");
+        errorResponse.setDebugMessage(ex.getMessage());
         logger.error(errorResponse.getMsg());
         return buildResponseEntity(errorResponse);
     }
@@ -56,16 +67,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleEntityNotFound(EntityNotFoundException ex){
         logger.error(ex.getMessage());
         return buildResponseEntity(new ApiError(HttpStatus.NOT_FOUND, ex));
-    }
-
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    protected ResponseEntity<Object> handleDataIntegrityViolation
-            (DataIntegrityViolationException ex, WebRequest request){
-        logger.error(ex.getMessage());
-        if(ex.getCause() instanceof ConstraintViolationException){
-            return buildResponseEntity(new ApiError(HttpStatus.CONFLICT, "Database error", ex.getCause()));
-        }
-        return buildResponseEntity(new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex));
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
@@ -108,15 +109,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         logger.error(error);
         return buildResponseEntity(new ApiError(HttpStatus.BAD_REQUEST, error, ex));
     }
-
-    @Override
-    protected ResponseEntity<Object> handleHttpMessageNotWritable(HttpMessageNotWritableException ex, HttpHeaders headers,
-                                                                  HttpStatusCode status, WebRequest request) {
-        String error = "Error writing JSON output";
-        logger.error(error);
-        return buildResponseEntity(new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, error, ex));
-    }
-
     @Override
     protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex,
                                                                           HttpHeaders headers, HttpStatusCode status,

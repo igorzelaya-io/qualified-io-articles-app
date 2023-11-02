@@ -6,6 +6,7 @@ import com.example.articles.mapper.CommentMapper;
 import com.example.articles.model.Comment;
 import com.example.articles.service.CommentService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +42,12 @@ public class CommentController {
     @GetMapping("/comments/{id}")
     public ResponseEntity<Comment> findById(@PathVariable("id") int id) {
         Comment comment = service.findById(id);
+        return new ResponseEntity<>(comment, HttpStatus.OK);
+    }
+
+    @GetMapping("/comments/emails")
+    public ResponseEntity<Comment> findCommentByEmail(@RequestParam @Email final String email) {
+        Comment comment = service.findCommentByEmail(email);
         return new ResponseEntity<>(comment, HttpStatus.OK);
     }
 

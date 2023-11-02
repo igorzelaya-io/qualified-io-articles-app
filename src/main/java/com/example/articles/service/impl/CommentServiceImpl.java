@@ -39,6 +39,16 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    public Comment findCommentByEmail(String commentEmail) {
+        return comments
+                .stream()
+                .filter(comment -> comment.getEmail() == commentEmail)
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException
+                        (Comment.class, "email", commentEmail));
+    }
+
+    @Override
     public Comment save(Comment entity) {
         comments.add(entity);
         entity.setCreatedAt(LocalDateTime.now());
@@ -73,10 +83,14 @@ public class CommentServiceImpl implements CommentService {
     }
     @Override
     public List<Comment> findCreatedInBetweenDate(LocalDateTime startDate, LocalDateTime endDate) {
+
         return this.comments
                 .stream()
                 .filter(comment -> comment.getCreatedAt().isAfter(startDate) &&
                         comment.getCreatedAt().isBefore(endDate))
                 .collect(Collectors.toList());
+
     }
+
+
 }
